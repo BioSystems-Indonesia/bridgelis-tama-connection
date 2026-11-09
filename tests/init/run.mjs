@@ -185,9 +185,15 @@ console.log('OK');
     assert.ok(route.output.includes("Route::post('/lis/webhook'"), route.output);
     assert.strictEqual(runSync('php', [phpCli, 'init', '--framework', 'nope'], project).code, 2);
 
-    // vendor/bin holds a Composer proxy that includes the real script.
-    const cliPath = phpCli.split(path.sep).join('/');
-    fs.writeFileSync(path.join(project, 'proxy.php'), `<?php return include '${cliPath}';\n`);
+    // vendor/bin holds a Composer proxy that includes the real script. On PHP < 8 the proxy strips
+    // the shebang first (an included shebang is output before declare()), so this copy has none.
+    fs.mkdirSync(path.join(project, 'pkg/bin'), { recursive: true });
+    fs.cpSync(path.join(path.dirname(phpCli), '../templates'), path.join(project, 'pkg/templates'), { recursive: true });
+    fs.writeFileSync(
+      path.join(project, 'pkg/bin/cli'),
+      fs.readFileSync(phpCli, 'utf8').replace(/^#!.*\r?\n/, '')
+    );
+    fs.writeFileSync(path.join(project, 'proxy.php'), `<?php return include __DIR__ . '/pkg/bin/cli';\n`);
     const proxied = runSync('php', ['proxy.php', 'init', '--dir', 'client/proxied'], project);
     assert.ok(fs.existsSync(path.join(project, 'client/proxied/lis.php')), proxied.output);
   });

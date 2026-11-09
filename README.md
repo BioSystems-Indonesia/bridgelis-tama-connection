@@ -3,7 +3,6 @@
 Library untuk menghubungkan **SIMRS** ke **LIS Tama** lewat API HIS V2. Cukup install, isi environment variable, lalu panggil method. Logika integrasi (validasi data, pencegahan kiriman ganda, penanganan LIS yang sedang down, dan penerimaan hasil lewat webhook) sudah ada di dalam library.
 
 > **Status:** versi 0.1.0, belum dirilis ke npm dan Packagist. Nama paket JavaScript: `bridgelis-tama-connection`. Paket Composer: `tama-connection/bridgelis-tama-connection`.
-> Dokumen desain: [brainstorming.md](docs/brainstorming.md) · Aturan menulis kode: [rules.md](docs/rules.md)
 
 ---
 
