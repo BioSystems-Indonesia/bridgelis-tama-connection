@@ -38,6 +38,9 @@ jobs:
           git commit -m "Release v$version"
           git tag "v$version"
           git push origin "v$version"
-      - run: npm publish ./targets/js --access public
+      # Staging needs npm >= 11.15. The token is stage-only: a maintainer approves with 2FA on npmjs.com.
+      - run: npm install -g npm@11
+      - run: npm stage publish
+        working-directory: targets/js
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
