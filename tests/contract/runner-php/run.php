@@ -804,10 +804,15 @@ runTest('17: Concurrent createOrder for one order_id reaches the LIS once', func
     $sc = loadScenario('17-create-order-concurrent');
     callMock('set_behavior', ['orderDelayMs' => $sc['orderDelayMs']]);
     $raceDir = $rootDir . '/tmp/test-storage-php-race';
+    // Start with no folder at all: the workers must also survive racing to create it.
     if (is_dir($raceDir)) {
         foreach (glob($raceDir . '/*/*') ?: [] as $file) {
             @unlink($file);
         }
+        foreach (glob($raceDir . '/*') ?: [] as $dir) {
+            @rmdir($dir);
+        }
+        @rmdir($raceDir);
     }
     $scenarioFile = dirname(__DIR__) . '/scenarios/17-create-order-concurrent.json';
 

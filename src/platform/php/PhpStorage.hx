@@ -12,6 +12,8 @@ import haxe.Json;
 import php.Global;
 
 class PhpStorage implements IStorage {
+  private static inline var MAX_ATTEMPTS:Int = 5;
+
   public var isMemoryOnly:Bool = false;
   private var targetDir:String;
   private var hash:IHash;
@@ -39,14 +41,27 @@ class PhpStorage implements IStorage {
     var baseHash = hash.sha256Hex(baseUrl).substr(0, 12);
     this.targetDir = baseDir + "/" + baseHash;
 
-    var dirExists:Bool = php.Syntax.code("is_dir({0})", this.targetDir);
-    if (!dirExists) {
-      var created:Bool = php.Syntax.code("@mkdir({0}, 0777, true)", this.targetDir);
-      var dirNowExists:Bool = php.Syntax.code("is_dir({0})", this.targetDir);
-      if (!created && !dirNowExists) {
-        triggerMemoryFallback();
-      }
+    if (!ensureDir()) {
+      triggerMemoryFallback();
     }
+  }
+
+  /**
+   * Creates the storage folder. On PHP 7.4 a recursive mkdir fails when another process creates
+   * the same parent at that moment, which is not a sign of an unwritable disk, so it is retried.
+   */
+  private function ensureDir():Bool {
+    for (attempt in 0...MAX_ATTEMPTS) {
+      if (php.Syntax.code("is_dir({0})", this.targetDir)) {
+        return true;
+      }
+      php.Syntax.code("@mkdir({0}, 0777, true)", this.targetDir);
+      if (php.Syntax.code("is_dir({0})", this.targetDir)) {
+        return true;
+      }
+      Global.usleep(2000);
+    }
+    return false;
   }
 
   private function triggerMemoryFallback():Void {
@@ -96,10 +111,7 @@ class PhpStorage implements IStorage {
       return;
     }
 
-    var dirExists:Bool = php.Syntax.code("is_dir({0})", this.targetDir);
-    if (!dirExists) {
-      php.Syntax.code("@mkdir({0}, 0777, true)", this.targetDir);
-    }
+    ensureDir();
 
     var filePath = getFilePath(key);
     var now = clock.nowMs();
@@ -145,16 +157,13 @@ class PhpStorage implements IStorage {
       return memoryFallback.setIfAbsent(key, value, ttlSec);
     }
 
-    var dirExists:Bool = php.Syntax.code("is_dir({0})", this.targetDir);
-    if (!dirExists) {
-      php.Syntax.code("@mkdir({0}, 0777, true)", this.targetDir);
-    }
+    ensureDir();
 
     var filePath = getFilePath(key);
     var exp:Float = ttlSec > 0 ? (clock.nowMs() + (ttlSec * 1000.0)) : 0.0;
     var data = Json.stringify({v: value, exp: exp});
 
-    for (attempt in 0...2) {
+    for (attempt in 0...MAX_ATTEMPTS) {
       var handle:Dynamic = php.Syntax.code("@fopen({0}, 'x')", filePath);
       if (handle != false) {
         php.Syntax.code("fwrite({0}, {1})", handle, data);
@@ -162,15 +171,23 @@ class PhpStorage implements IStorage {
         return true;
       }
       var fileExists:Bool = php.Syntax.code("file_exists({0})", filePath);
-      if (!fileExists) {
-        triggerMemoryFallback();
-        return memoryFallback.setIfAbsent(key, value, ttlSec);
-      }
-      if (!removeIfExpired(filePath)) {
-        return false;
+      if (fileExists) {
+        if (!removeIfExpired(filePath)) {
+          return false;
+        }
+      } else {
+        // Missing after a failed create: the owner released it just now, or the folder is gone.
+        ensureDir();
       }
     }
-    return false;
+
+    // Only a file that can never be created means the disk is unusable: a per-process lock
+    // would otherwise let every process send.
+    if (php.Syntax.code("file_exists({0})", filePath)) {
+      return false;
+    }
+    triggerMemoryFallback();
+    return memoryFallback.setIfAbsent(key, value, ttlSec);
   }
 
   /**
