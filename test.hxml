@@ -1,0 +1,9 @@
+-cp src
+-cp tests/unit
+-lib utest
+-lib hxnodejs
+-D js-es=6
+-main TestMain
+--js bin/unit-test.cjs
+--cmd node bin/unit-test.cjs
+

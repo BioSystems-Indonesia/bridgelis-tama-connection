@@ -1,0 +1,17 @@
+{
+  "name": "bridgelis-tama-connection-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test:unit": "node scripts/run-haxe.mjs test.hxml && node scripts/run-haxe.mjs test-php.hxml",
+    "test:contract": "node tests/contract/runner-js/run.mjs && php tests/contract/runner-php/run.php",
+    "test": "npm run test:unit && npm run build && npm run test:facade && npm run test:contract && npm run test:init",
+    "test:sandbox": "bash sandbox/run.sh",
+    "test:sandbox:all": "bash sandbox/run-all.sh",
+    "test:facade": "node tests/facade-sync/check.mjs",
+    "test:init": "node tests/init/run.mjs"
+  },
+  "license": "MIT"
+}

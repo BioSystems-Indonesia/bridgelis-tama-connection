@@ -1,0 +1,29 @@
+{
+  "name": "16-webhook-request-shapes",
+  "description": "handleWebhook accepts the request shapes of common frameworks; each must pass the secret check (wrong secret must still be 401) and reply with JSON headers",
+  "secret": "shape-secret",
+  "order_no": "ORD-WEBHOOK-OK",
+  "expectedStatus": 200,
+  "expectedContentType": "application/json",
+  "shapes": {
+    "js": [
+      "raw string body + plain headers",
+      "Buffer body + header values as string[] (Node IncomingHttpHeaders)",
+      "parsed object body + fetch Headers",
+      "raw body + Map",
+      "raw body + [name, value] pairs",
+      "fetch Request (Next.js, Hono, Bun, Deno)",
+      "Express/NestJS request with parsed req.body",
+      "Node request stream without body parser"
+    ],
+    "php": [
+      "raw string body + plain headers (getallheaders)",
+      "raw body + Laravel/Symfony headers->all() (values string[])",
+      "decoded array body + headers",
+      "Laravel/Symfony Request object (getContent + headers bag)",
+      "PSR-7 ServerRequest (getBody + getHeaders)",
+      "CodeIgniter 4 request (header objects with getValue)",
+      "no arguments: plain PHP reading $_SERVER headers"
+    ]
+  }
+}

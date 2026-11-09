@@ -1,0 +1,39 @@
+name: ci
+on: [push, pull_request]
+
+# `targets/` is not committed: every job builds it from `src/` and `facade/` (npm run build).
+# Haxe is only a contributor and CI requirement; the released packages contain the built output.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Minimum supported runtimes (LLD 1.1) and a current pair.
+        runtime: [{ node: 18, php: '7.4' }, { node: 22, php: '8.3' }]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ matrix.runtime.node }}' }
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '${{ matrix.runtime.php }}' }
+      - uses: krdlab/setup-haxe@v1
+        with: { haxe-version: 4.3.7 }
+      - run: haxelib install utest --always
+      - run: haxelib install hxnodejs --always
+      - run: npm test
+
+  # Docker sandbox against the repo's mock LIS: create, result, webhook -> onResult in real frameworks.
+  sandbox-mock:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: krdlab/setup-haxe@v1
+        with: { haxe-version: 4.3.7 }
+      - run: haxelib install hxnodejs --always
+      - run: haxelib install utest --always
+      - run: npm run build
+      - run: MODES=mock bash sandbox/run-all.sh

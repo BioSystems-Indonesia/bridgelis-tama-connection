@@ -1,0 +1,17 @@
+{
+  "name": "06-circuit-breaker",
+  "description": "5 consecutive transient failures trip circuit breaker open, fast-failing subsequent calls without HTTP dispatch",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-06",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}
+

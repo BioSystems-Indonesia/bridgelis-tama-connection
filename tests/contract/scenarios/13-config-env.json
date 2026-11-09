@@ -1,0 +1,11 @@
+{
+  "name": "13-config-env",
+  "description": "Validates process environment variable fallback and explicit override precedence",
+  "env": {
+    "LIS_BASE_URL": "http://env-url:8000",
+    "LIS_API_KEY": "env-secret-key"
+  },
+  "override": {
+    "baseUrl": "http://custom-url:9999"
+  }
+}

@@ -1,0 +1,7 @@
+-cp src
+-cp tests/unit
+-lib utest
+-main TestMain
+--php bin/unit-test-php
+
+--cmd php bin/unit-test-php/index.php

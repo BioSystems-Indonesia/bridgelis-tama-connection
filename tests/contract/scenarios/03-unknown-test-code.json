@@ -1,0 +1,17 @@
+{
+  "name": "03-unknown-test-code",
+  "description": "Order containing test code not in catalog throws UNKNOWN_TEST_CODE and sends 0 requests to /order",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-03",
+      "tests": [{ "code": "NON_EXISTENT_CODE" }]
+    }
+  }
+}
+

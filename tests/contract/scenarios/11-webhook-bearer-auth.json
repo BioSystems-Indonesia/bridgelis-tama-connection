@@ -1,0 +1,8 @@
+{
+  "name": "11-webhook-bearer-auth",
+  "description": "Validates Authorization: Bearer <token> header support for webhook endpoints",
+  "secret": "bearer-token-xyz",
+  "secretHeader": "Authorization",
+  "order_id": "ORD-BEARER",
+  "expectedStatus": 200
+}

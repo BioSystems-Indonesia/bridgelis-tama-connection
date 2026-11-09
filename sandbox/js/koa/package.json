@@ -1,0 +1,1 @@
+{ "name": "sbx-koa", "private": true, "dependencies": { "koa": "^2", "@koa/router": "^13", "koa-bodyparser": "^4" } }

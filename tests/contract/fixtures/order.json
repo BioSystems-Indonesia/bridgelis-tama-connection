@@ -1,0 +1,30 @@
+{
+  "patient": {
+    "medical_record_number": "MRN-12345",
+    "first_name": "Budi",
+    "last_name": "Santoso",
+    "sex": "M",
+    "date_of_birth": "1990-05-15",
+    "phone": "08123456789",
+    "address": "Jl. Merdeka No. 10, Jakarta"
+  },
+  "lis_order": {
+    "order_id": "ORD-FIXTURE-001",
+    "clinician_name": "dr. Setiawan, Sp.PK",
+    "room_name": "Rawat Inap Mawar 3",
+    "tests": [
+      {
+        "code": "GLU",
+        "loinc_code": "2345-7",
+        "name": "Glukosa Sewaktu"
+      }
+    ],
+    "packages": [
+      {
+        "code": "PKG-LIPID",
+        "name": "Paket Lipid Lengkap"
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,1 @@
+{ "name": "sbx-express5", "private": true, "dependencies": { "express": "^5" } }

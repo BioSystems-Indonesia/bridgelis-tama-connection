@@ -1,0 +1,17 @@
+{
+  "name": "04-sanitize-patient",
+  "description": "Patient sex 'P' and date_of_birth '15/05/1990' normalized to 'F' and '1990-05-15' on server request",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Siti",
+      "date_of_birth": "15/05/1990",
+      "sex": "P"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-04",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}
+

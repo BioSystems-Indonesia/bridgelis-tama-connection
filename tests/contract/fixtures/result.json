@@ -1,0 +1,19 @@
+{
+  "order_id": "ORD-FIXTURE-001",
+  "status": "COMPLETED",
+  "results": [
+    {
+      "package_name": "Paket Gula",
+      "package_code": "PKT_GULA",
+      "test_code": "GLU",
+      "test_name": "Glukosa Sewaktu",
+      "result": "110",
+      "unit": "mg/dL",
+      "reference_range": "70 - 140",
+      "abnormal_flag": "N",
+      "is_critical": false,
+      "status": "Final",
+      "validated_at": "2026-11-04T10:29:00+07:00"
+    }
+  ]
+}

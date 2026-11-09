@@ -1,0 +1,40 @@
+{
+  "name": "tama-connection/bridgelis-tama-connection",
+  "description": "Client library connecting SIMRS to LIS Tama via HIS V2 API",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "lis",
+    "simrs",
+    "his",
+    "laboratory",
+    "tama"
+  ],
+  "homepage": "https://github.com/BioSystems-Indonesia/bridgelis-tama-connection",
+  "support": {
+    "issues": "https://github.com/BioSystems-Indonesia/bridgelis-tama-connection/issues",
+    "source": "https://github.com/BioSystems-Indonesia/bridgelis-tama-connection"
+  },
+  "bin": [
+    "targets/php/bin/bridgelis-tama-connection"
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*"
+  },
+  "suggest": {
+    "ext-curl": "Recommended for performant HTTP communication with LIS",
+    "ext-openssl": "Required when LIS base URL uses HTTPS"
+  },
+  "autoload": {
+    "files": [
+      "targets/php/lib/BridgeLisTamaConnection/php/Boot.php"
+    ],
+    "psr-4": {
+      "BridgeLisTamaConnection\\": [
+        "targets/php/src/",
+        "targets/php/lib/BridgeLisTamaConnection/"
+      ]
+    }
+  }
+}

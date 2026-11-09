@@ -1,0 +1,17 @@
+{
+  "name": "01-create-order-success",
+  "description": "Create order succeeds on first call, second identical call returns UNCHANGED with 0 additional server requests",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-01",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}
+

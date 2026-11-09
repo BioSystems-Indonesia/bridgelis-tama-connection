@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "code": "PKG-LIPID",
+    "loinc_code": "24326-1",
+    "name": "Paket Lipid Lengkap",
+    "tests": ["CHOL", "TG"]
+  }
+]
+

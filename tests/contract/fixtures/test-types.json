@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "code": "GLU",
+    "loinc_code": "2345-7",
+    "name": "Glukosa Sewaktu",
+    "alias_code": "GDS",
+    "alternative_codes": ["GLUCOSE"]
+  },
+  {
+    "id": 2,
+    "code": "CHOL",
+    "loinc_code": "14682-9",
+    "name": "Kolesterol Total",
+    "alias_code": "CHOL-T",
+    "alternative_codes": []
+  },
+  {
+    "id": 3,
+    "code": "TG",
+    "loinc_code": "58410-2",
+    "name": "Trigliserida",
+    "alias_code": "TRIG",
+    "alternative_codes": []
+  }
+]
+

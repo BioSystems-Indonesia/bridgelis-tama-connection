@@ -1,0 +1,41 @@
+name: release
+
+# Run by hand from the Actions tab, on master, after the version in package.json is bumped.
+# `targets/` is not on master, and Packagist installs what a tag contains, so the tag points at a
+# commit of its own that adds targets/php. npm goes last: a tag can be deleted, a publish cannot.
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3' }
+      - uses: krdlab/setup-haxe@v1
+        with: { haxe-version: 4.3.7 }
+      - run: haxelib install utest --always
+      - run: haxelib install hxnodejs --always
+      - run: npm test
+      - name: Tag a commit that carries the PHP build
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if git ls-remote --exit-code --tags origin "v$version"; then
+            echo "Tag v$version already exists. Bump the version in package.json first." >&2
+            exit 1
+          fi
+          git add -f targets/php composer.json
+          git commit -m "Release v$version"
+          git tag "v$version"
+          git push origin "v$version"
+      - run: npm publish ./targets/js --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

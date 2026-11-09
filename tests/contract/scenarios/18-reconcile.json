@@ -1,0 +1,18 @@
+{
+  "name": "18-reconcile",
+  "description": "reconcile() lists COMPLETED orders in a window, drops orders without barcode_simrs, honors skip, delivers final results to onResult and reports pending and failed ones",
+  "since": "2026-11-04",
+  "rows": [
+    { "id": 5, "order_id": "ORD-REC-OK", "barcode": "2611040005", "barcode_simrs": "ORD-REC-OK", "work_order_status": "SUCCESS" },
+    { "id": 4, "order_id": "2611040004", "barcode": "2611040004", "barcode_simrs": "", "work_order_status": "SUCCESS" },
+    { "id": 3, "order_id": "ORD-PENDING", "barcode": "2611040003", "barcode_simrs": "ORD-PENDING", "work_order_status": "SUCCESS" },
+    { "id": 2, "order_id": "ORD-REC-SKIP", "barcode": "2611040002", "barcode_simrs": "ORD-REC-SKIP", "work_order_status": "SUCCESS" },
+    { "id": 1, "order_id": "ORD-REC-FAIL", "barcode": "2611040001", "barcode_simrs": "ORD-REC-FAIL", "work_order_status": "SUCCESS" }
+  ],
+  "skipIds": ["ORD-REC-SKIP"],
+  "failIds": ["ORD-REC-FAIL"],
+  "expectedDeliveredIds": ["ORD-REC-OK"],
+  "expectedReport": { "checked": 3, "delivered": 1, "pending": 1, "skipped": 1, "truncated": false },
+  "expectedFailedIds": ["ORD-REC-FAIL"],
+  "unexpectedResultRequests": ["2611040004", "ORD-REC-SKIP"]
+}

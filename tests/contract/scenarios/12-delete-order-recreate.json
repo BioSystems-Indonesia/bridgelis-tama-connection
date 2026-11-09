@@ -1,0 +1,16 @@
+{
+  "name": "12-delete-order-recreate",
+  "description": "Validates that deleteOrder evicts the stored idempotency hash so an identical order can be resent",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-DEL",
+      "first_name": "Budi",
+      "sex": "M",
+      "date_of_birth": "1990-01-01"
+    },
+    "lis_order": {
+      "order_id": "ORD-DELETE-RECREATE",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}

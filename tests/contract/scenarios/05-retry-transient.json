@@ -1,0 +1,17 @@
+{
+  "name": "05-retry-transient",
+  "description": "Transient 503 error on first attempt retries once in 500ms and succeeds",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-05",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}
+

@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Left out of the archive Composer downloads: a release holds only composer.json and targets/php.
+/.github export-ignore
+/docs export-ignore
+/facade export-ignore
+/sandbox export-ignore
+/scripts export-ignore
+/src export-ignore
+/tests export-ignore
+/build-js.hxml export-ignore
+/build-php.hxml export-ignore
+/test.hxml export-ignore
+/test-php.hxml export-ignore
+/package.json export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore

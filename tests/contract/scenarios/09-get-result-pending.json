@@ -1,0 +1,7 @@
+{
+  "name": "09-get-result-pending",
+  "description": "getResult returns state PENDING and is_final false when LIS returns 404 or incomplete status",
+  "order_id": "ORD-PENDING-001",
+  "expectedState": "PENDING",
+  "expectedIsFinal": false
+}

@@ -1,0 +1,12 @@
+-cp src
+-D php-prefix=BridgeLisTamaConnection
+core.LisCore
+platform.Platform
+platform.php.PhpHttp
+platform.php.PhpStorage
+platform.php.PhpEnv
+platform.php.PhpClock
+platform.php.PhpHash
+platform.php.PhpLogger
+platform.MemoryStorage
+--php targets/php

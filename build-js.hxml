@@ -1,0 +1,21 @@
+-cp src
+-lib hxnodejs
+-D js-es=6
+--macro addMetadata('@:expose("NodeHttp")', "platform.js.NodeHttp")
+--macro addMetadata('@:expose("NodeStorage")', "platform.js.NodeStorage")
+--macro addMetadata('@:expose("NodeEnv")', "platform.js.NodeEnv")
+--macro addMetadata('@:expose("NodeClock")', "platform.js.NodeClock")
+--macro addMetadata('@:expose("NodeHash")', "platform.js.NodeHash")
+--macro addMetadata('@:expose("NodeLogger")', "platform.js.NodeLogger")
+--macro addMetadata('@:expose("MemoryStorage")', "platform.MemoryStorage")
+--macro addMetadata('@:expose("Platform")', "platform.Platform")
+core.LisCore
+platform.Platform
+platform.js.NodeHttp
+platform.js.NodeStorage
+platform.js.NodeEnv
+platform.js.NodeClock
+platform.js.NodeHash
+platform.js.NodeLogger
+platform.MemoryStorage
+--js targets/js/core.cjs

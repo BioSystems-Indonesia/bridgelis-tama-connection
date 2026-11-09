@@ -1,0 +1,13 @@
+{
+  "name": "10-webhook-dispatch",
+  "description": "Validates webhook auth, order ID extraction, result auto-fetch, 502 on upstream failure, and 500 on consumer throw",
+  "secret": "secret-key-123",
+  "secretHeader": "X-API-Key",
+  "cases": [
+    { "type": "auth_fail", "headers": { "x-api-key": "bad-key" }, "body": { "order_no": "ORD-1" }, "expectedStatus": 401 },
+    { "type": "missing_id", "headers": { "x-api-key": "secret-key-123" }, "body": { "status": "COMPLETED" }, "expectedStatus": 400 },
+    { "type": "upstream_503", "headers": { "x-api-key": "secret-key-123" }, "body": { "order_no": "ORD-LIS-DOWN" }, "expectedStatus": 502 },
+    { "type": "success", "headers": { "x-api-key": "secret-key-123" }, "body": { "order_no": "ORD-WEBHOOK-OK" }, "expectedStatus": 200 },
+    { "type": "handler_error", "headers": { "x-api-key": "secret-key-123" }, "body": { "order_no": "ORD-FAIL-HANDLER" }, "expectedStatus": 500 }
+  ]
+}

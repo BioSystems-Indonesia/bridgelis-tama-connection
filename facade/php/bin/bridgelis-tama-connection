@@ -1,0 +1,199 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * `bridgelis-tama-connection init`: creates the integration folder once (HLD D15).
+ * Developer tooling, not library logic: it copies templates and prints a route snippet. It never
+ * overwrites an existing file without --force and never edits the user's own files.
+ * Plain PHP, no dependencies, PHP >= 7.4.
+ */
+
+const DEFAULT_DIR = 'client/bridgelis-tama-connection';
+
+/** Webhook route snippets, printed for the chosen framework. */
+const ROUTES = [
+    'laravel' => <<<'CODE'
+// routes/api.php (no CSRF check there)
+Route::post('/lis/webhook', function (\Illuminate\Http\Request $request) {
+    require_once base_path('{{FILE}}');
+    $r = lisHandleWebhook($request);
+    return response($r['body'], $r['status'], $r['headers']);
+});
+CODE,
+    'ci4' => <<<'CODE'
+// app/Config/Routes.php: $routes->post('lis/webhook', 'Lis::webhook');
+// app/Controllers/Lis.php
+public function webhook()
+{
+    require_once ROOTPATH . '{{FILE}}';
+    $r = lisHandleWebhook($this->request);
+    return $this->response->setStatusCode($r['status'])->setHeader('Content-Type', $r['headers']['Content-Type'])->setBody($r['body']);
+}
+CODE,
+    'slim' => <<<'CODE'
+$app->post('/lis/webhook', function ($request, $response) {
+    require_once __DIR__ . '/../{{FILE}}';
+    $r = lisHandleWebhook($request);
+    $response->getBody()->write($r['body']);
+    return $response->withStatus($r['status'])->withHeader('Content-Type', $r['headers']['Content-Type']);
+});
+CODE,
+    'symfony' => <<<'CODE'
+// src/Controller/LisController.php
+#[Route('/lis/webhook', methods: ['POST'])]
+public function webhook(\Symfony\Component\HttpFoundation\Request $request): \Symfony\Component\HttpFoundation\Response
+{
+    require_once $this->getParameter('kernel.project_dir') . '/{{FILE}}';
+    $r = lisHandleWebhook($request);
+    return new \Symfony\Component\HttpFoundation\Response($r['body'], $r['status'], $r['headers']);
+}
+CODE,
+];
+
+const USAGE = <<<'TEXT'
+Usage: bridgelis-tama-connection init [options]
+
+Options:
+  --dir <folder>        Where to create the files (default: client/bridgelis-tama-connection)
+  --framework <name>    Print the webhook route for: laravel, ci4, slim, symfony
+  --force               Overwrite files that already exist (they are listed first)
+  --help                Show this help
+
+Plain PHP needs no route: point the webhook URL at webhook.php.
+TEXT;
+
+/** @return array{command: ?string, options: array<string, mixed>} */
+function parseArguments(array $argv): array
+{
+    $options = ['dir' => DEFAULT_DIR, 'framework' => null, 'force' => false, 'help' => false];
+    $rest = [];
+    $count = count($argv);
+    for ($i = 0; $i < $count; $i++) {
+        $arg = $argv[$i];
+        $flag = $arg;
+        $inline = null;
+        if (strpos($arg, '--') === 0 && strpos($arg, '=') !== false) {
+            [$flag, $inline] = explode('=', $arg, 2);
+        }
+        $value = function () use (&$i, $argv, $inline) {
+            return $inline !== null ? $inline : ($argv[++$i] ?? '');
+        };
+        if ($flag === '--dir') {
+            $options['dir'] = $value();
+        } elseif ($flag === '--framework') {
+            $options['framework'] = $value();
+        } elseif ($flag === '--force') {
+            $options['force'] = true;
+        } elseif ($flag === '--help' || $flag === '-h') {
+            $options['help'] = true;
+        } elseif (strpos($arg, '-') === 0) {
+            throw new InvalidArgumentException("Unknown option: {$arg}");
+        } else {
+            $rest[] = $arg;
+        }
+    }
+    return ['command' => $rest[0] ?? null, 'options' => $options];
+}
+
+/** Path of $to relative to the folder $from; both are absolute with forward slashes. */
+function relativePath(string $from, string $to): string
+{
+    $fromParts = array_values(array_filter(explode('/', $from), 'strlen'));
+    $toParts = array_values(array_filter(explode('/', $to), 'strlen'));
+    while ($fromParts && $toParts && $fromParts[0] === $toParts[0]) {
+        array_shift($fromParts);
+        array_shift($toParts);
+    }
+    return str_repeat('../', count($fromParts)) . implode('/', $toParts);
+}
+
+function normalizePath(string $path): string
+{
+    return rtrim(str_replace('\\', '/', $path), '/');
+}
+
+function isAbsolutePath(string $path): bool
+{
+    return $path !== '' && ($path[0] === '/' || preg_match('#^[A-Za-z]:[/\\\\]#', $path) === 1);
+}
+
+/**
+ * @param array<int, string> $argv arguments after the script name
+ * @param callable $out receives each output line
+ */
+function runCli(array $argv, string $cwd, callable $out): int
+{
+    $parsed = parseArguments($argv);
+    $options = $parsed['options'];
+    if ($options['help'] || $parsed['command'] === null) {
+        $out(USAGE);
+        return $options['help'] || $parsed['command'] !== null ? 0 : 2;
+    }
+    if ($parsed['command'] !== 'init') {
+        throw new InvalidArgumentException("Unknown command: {$parsed['command']}");
+    }
+    $framework = $options['framework'];
+    if ($framework !== null && !isset(ROUTES[$framework])) {
+        throw new InvalidArgumentException(
+            "Unknown --framework \"{$framework}\". Choose: " . implode(', ', array_keys(ROUTES)) . '.'
+        );
+    }
+
+    $cwd = normalizePath($cwd);
+    $dir = normalizePath((string) $options['dir']);
+    $targetDir = isAbsolutePath($dir) ? $dir : $cwd . '/' . $dir;
+    $shownDir = strpos($targetDir, $cwd . '/') === 0 ? substr($targetDir, strlen($cwd) + 1) : $targetDir;
+    $autoload = relativePath($targetDir, $cwd . '/vendor/autoload.php');
+
+    $templates = __DIR__ . '/../templates';
+    $files = [
+        'lis.php' => str_replace('{{AUTOLOAD}}', $autoload, (string) file_get_contents($templates . '/lis.php')),
+        'webhook.php' => (string) file_get_contents($templates . '/webhook.php'),
+        'README.md' => (string) file_get_contents($templates . '/README.md'),
+    ];
+
+    $force = (bool) $options['force'];
+    if ($force) {
+        foreach (array_keys($files) as $name) {
+            if (file_exists($targetDir . '/' . $name)) {
+                $out("Will overwrite: {$shownDir}/{$name}");
+            }
+        }
+    }
+    foreach ($files as $name => $content) {
+        $target = $targetDir . '/' . $name;
+        $exists = file_exists($target);
+        if ($exists && !$force) {
+            $out("Kept      {$shownDir}/{$name} (already exists; use --force to replace)");
+            continue;
+        }
+        if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true) && !is_dir($targetDir)) {
+            throw new RuntimeException("Cannot create folder {$targetDir}");
+        }
+        file_put_contents($target, $content);
+        $out(($exists ? 'Replaced  ' : 'Created   ') . "{$shownDir}/{$name}");
+    }
+
+    $out("\nNext: open {$shownDir}/README.md. Set LIS_BASE_URL and LIS_API_KEY, then fill the star parts.");
+    if ($framework !== null) {
+        $snippet = str_replace('{{FILE}}', "{$shownDir}/lis.php", ROUTES[$framework]);
+        $out("\nWebhook route for {$framework} (adjust the path):\n\n{$snippet}");
+    } else {
+        $out('Run again with --framework <' . implode('|', array_keys(ROUTES)) . '> to print the webhook route.');
+    }
+    return 0;
+}
+
+// No "is this the main script" check: Composer runs this file through an include from vendor/bin.
+if (PHP_SAPI === 'cli') {
+    try {
+        exit(runCli(array_slice($argv, 1), (string) getcwd(), function (string $line) {
+            echo $line . PHP_EOL;
+        }));
+    } catch (Throwable $e) {
+        fwrite(STDERR, 'Error: ' . $e->getMessage() . PHP_EOL . PHP_EOL . USAGE . PHP_EOL);
+        exit(2);
+    }
+}

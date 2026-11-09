@@ -1,0 +1,53 @@
+{
+  "_source": "Recorded from a real LIS on 2026-11-05; patient data masked.",
+  "code": 200,
+  "status": "Ok",
+  "data": [
+    {
+      "id": 51,
+      "order_id": "ORD-FIXTURE-1",
+      "barcode": "261105051",
+      "barcode_simrs": "ORD-FIXTURE-1",
+      "work_order_status": "SUCCESS",
+      "received_date_time": "2026-11-05T13:44:57+07:00",
+      "patient": {
+        "medical_record_number": "MRN-1",
+        "first_name": "Budi",
+        "last_name": "Santoso",
+        "date_of_birth": "1990-01-01",
+        "sex": "M"
+      },
+      "total_request": 2
+    },
+    {
+      "id": 43,
+      "order_id": "ORD-FIXTURE-2",
+      "barcode": "261105043",
+      "work_order_status": "SUCCESS",
+      "received_date_time": "2026-11-05T10:41:11+07:00",
+      "patient": {
+        "medical_record_number": "MRN-2",
+        "first_name": "Budi",
+        "date_of_birth": "1990-01-01",
+        "sex": "M",
+        "last_name": "Santoso"
+      },
+      "total_request": 1
+    },
+    {
+      "id": 42,
+      "order_id": "ORD-FIXTURE-3",
+      "barcode": "261105042",
+      "work_order_status": "SUCCESS",
+      "received_date_time": "2026-11-05T10:37:57+07:00",
+      "patient": {
+        "medical_record_number": "MRN-3",
+        "first_name": "Budi",
+        "date_of_birth": "1990-01-01",
+        "sex": "M",
+        "last_name": "Santoso"
+      },
+      "total_request": 1
+    }
+  ]
+}

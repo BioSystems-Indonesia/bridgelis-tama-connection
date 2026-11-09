@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "username": "dr_setiawan",
+    "name": "dr. Setiawan, Sp.PK",
+    "role": "doctor"
+  },
+  {
+    "id": 2,
+    "username": "analyst_ani",
+    "name": "Ani Wijaya, A.Md.AK",
+    "role": "analyst"
+  }
+]
+

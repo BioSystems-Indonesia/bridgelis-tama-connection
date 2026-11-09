@@ -1,0 +1,16 @@
+{
+  "name": "19-custom-storage",
+  "description": "A storage object injected by the application replaces the built-in file storage: dedup, the in-progress lock and its release all go through it (HLD D14)",
+  "order": {
+    "patient": {
+      "medical_record_number": "RM-STORE",
+      "first_name": "Siti",
+      "sex": "F",
+      "date_of_birth": "1992-02-02"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-STORE",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  }
+}

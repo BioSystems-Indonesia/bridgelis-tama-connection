@@ -1,0 +1,9 @@
+{
+  "name": "08-status-code-mappings",
+  "description": "Validates error code mappings: 401 -> AUTH_FAILED, 403 -> BRIDGING_DISABLED, 429 -> RATE_LIMITED (no retry)",
+  "cases": [
+    { "status": 401, "expectedCode": "AUTH_FAILED", "retryable": false },
+    { "status": 403, "expectedCode": "BRIDGING_DISABLED", "retryable": false },
+    { "status": 429, "expectedCode": "RATE_LIMITED", "retryable": true, "retried": false }
+  ]
+}

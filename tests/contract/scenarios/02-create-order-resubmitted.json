@@ -1,0 +1,29 @@
+{
+  "name": "02-create-order-resubmitted",
+  "description": "Create order with changed payload emits ORDER_RESUBMITTED warning",
+  "order_initial": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-02",
+      "tests": [{ "loinc_code": "2345-7" }]
+    }
+  },
+  "order_updated": {
+    "patient": {
+      "medical_record_number": "RM-001234",
+      "first_name": "Budi",
+      "date_of_birth": "1990-05-15",
+      "sex": "M"
+    },
+    "lis_order": {
+      "order_id": "ORD-CONTRACT-02",
+      "tests": [{ "loinc_code": "14682-9" }]
+    }
+  }
+}
+
